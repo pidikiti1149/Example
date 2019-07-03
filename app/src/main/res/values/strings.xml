@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">200429757_Midterm</string>
+    <array name="Choice">
+        <item>Rock</item>
+        <item>Paper</item>
+        <item>Scissors</item>
+    </array>
 </resources>

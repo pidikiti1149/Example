@@ -2,37 +2,38 @@ package com.example.a200429757_midterm;
 
 
 
-import androidx.appcompat.app.AppCompatActivity;
+public class game {
+    String FName;
+    String LName;
+    int GameId;
+    String Choice;
+    String Winner;
 
-import android.os.Bundle;
+    public game(String id, String fName, String lName, String choice) {
 
-
-
-    public class game {
-        private String GameId;
-        private String choice;
-        private String Winner;
-
-        public game(){
-
-        }
-
-        public game(String gameId, String choice, String winner) {
-            this.GameId= gameId;
-            this.choice = choice;
-            this.Winner = winner;
-        }
-
-        public String getGameId() {
-            return choice;
-        }
-
-        public String getChoice() {
-            return choice;
-        }
-
-        public String getWinner() {
-            return Winner;
-        }
     }
 
+    public game(String FName, String LName, int gameId, String choice) {
+        this.FName = FName;
+        this.LName = LName;
+        GameId = gameId;
+        Choice = choice;
+        //Winner = winner;
+    }
+
+    public String getFName() {
+        return FName;
+    }
+
+    public String getLName() {
+        return LName;
+    }
+
+    public int getGameId() {
+        return GameId;
+    }
+
+    public String getChoice() {
+        return Choice;
+    }
+}

@@ -1,99 +1,91 @@
 package com.example.a200429757_midterm;
-
-
 import android.os.Bundle;
 
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
+import java.util.Random;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ImageView input, output;
-    Button rock, paper, scissors;
-    int[] images = new int[]{
-            R.mipmap.rock,
-            R.mipmap.paper,
-            R.mipmap.scissors
-    };
-    int userinput = 0;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText editTextFName;
+    EditText editTextLName;
+    Spinner spinner;
+    Button buttonPlay, buttonReset;
+    DatabaseReference db;
+    int userinput = 0, rock, paper, scissors, sysChoice, winner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        editTextFName = findViewById(R.id.editTextFirstname);
+        editTextLName = findViewById(R.id.editTextLastName);
+        spinner = findViewById(R.id.spinner);
+        buttonPlay = findViewById(R.id.buttonPlay);
+        buttonReset = findViewById(R.id.buttonReset);
 
+        db = FirebaseDatabase.getInstance().getReference();
 
-        input = (ImageView) findViewById(R.id.ivinput);
-        output = (ImageView) findViewById(R.id.ivoutput);
-        rock = (Button) findViewById(R.id.btnrock);
-        paper = (Button) findViewById(R.id.btnpaper);
-        scissors = (Button) findViewById(R.id.btnscissors);
+        buttonPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (spinner.getSelectedItem().toString() == "Rock") {
+                    rock = v.getId();
+                } else if (spinner.getSelectedItem().toString() == "Paper") {
+                    paper = v.getId();
+                } else {
+                    scissors = v.getId();
+                }
 
-        rock.setOnClickListener(this);
-        paper.setOnClickListener(this);
-        scissors.setOnClickListener(this);
+                Random rand = new Random();
+                int randInt = rand.nextInt(100) + 1;
+                if (randInt < 34) {
+                    sysChoice = rock;
+                } else if (randInt > 34 && randInt < 66) {
+                    sysChoice = paper;
+                } else {
+                    sysChoice = scissors;
+                }
+
+                if (sysChoice == spinner.getSelectedItemId()) {
+                    Toast.makeText(getApplicationContext(), "OOPS! It's a Tie! :P", Toast.LENGTH_SHORT).show();
+                    //winner=spinner.getSelectedItemId();
+                }else if((sysChoice == rock) & spinner.getSelectedItem()=="paper"){
+                    Toast.makeText(getApplicationContext(), "You Won", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        buttonReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextFName.setText("");
+                editTextLName.setText("");
+
+            }
+        });
     }
 
-    public void onClick(View v) {
-        int id = v.getId();
-        switch (id) {
-            case R.id.btnrock:
-                userinput = 1;
-                input.setBackgroundResource(R.mipmap.rock);
-                setOutput();
-                break;
-            case R.id.btnpaper:
-                userinput = 2;
-                input.setBackgroundResource(R.mipmap.paper);
-                setOutput();
-                break;
-            case R.id.btnscissors:
-                userinput = 3;
-                input.setBackgroundResource(R.mipmap.scissors);
-                setOutput();
-                break;
-        }
+    public void playGame() {
+        String fName = editTextFName.getText().toString().trim();
+        String lName = editTextLName.getText().toString().trim();
+        String choice = spinner.getSelectedItem().toString();
+
+        String id = db.push().getKey();
+
+        game g = new game(id, fName, lName, choice);
+        db.child(id).setValue(g);
+
+
     }
 
-    private void setOutput() {
-        int imageId = (int) (Math.random() * images.length);
-        output.setBackgroundResource(images[imageId]);
-        checkresult(imageId);
-    }
-
-    private void checkresult(int imageId) {
-        if (userinput == 1 && imageId == 0) {
-            showresult(2);
-        } else if (userinput == 1 && imageId == 1) {
-            showresult(0);
-        } else if (userinput == 1 && imageId == 2) {
-            showresult(1);
-        } else if (userinput == 2 && imageId == 0) {
-            showresult(1);
-        } else if (userinput == 2 && imageId == 1) {
-            showresult(2);
-        } else if (userinput == 2 && imageId == 2) {
-            showresult(0);
-        } else if (userinput == 3 && imageId == 0) {
-            showresult(0);
-        } else if (userinput == 3 && imageId == 1) {
-            showresult(1);
-        } else if (userinput == 3 && imageId == 2) {
-            showresult(2);
-        }
-    }
-
-    private void showresult(int result) {
-        if (result == 0) {
-            Toast.makeText(getApplicationContext(), " You Lost ", Toast.LENGTH_SHORT).show();
-        } else if (result == 1)
-            Toast.makeText(getApplicationContext(), "You Won", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(getApplicationContext(), "It's tie", Toast.LENGTH_SHORT).show();
-    }
 }
